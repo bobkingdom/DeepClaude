@@ -28,11 +28,21 @@ class BaseClient(ABC):
         Yields:
             bytes: 原始响应数据
         """
+        if self.proxy:
+            logger.debug(f"使用代理: {self.proxy}")
+        
         try:
             async with aiohttp.ClientSession() as session:
-                async with session.post(self.api_url, headers=headers, json=data
-                                       proxy=self.proxy  # 使用配置的代理
-                ) as response:
+                # 构建请求参数
+                request_kwargs = {
+                    "headers": headers,
+                    "json": data
+                }
+                # 仅在配置了代理时添加 proxy 参数
+                if self.proxy:
+                    request_kwargs["proxy"] = self.proxy
+    
+                async with session.post(self.api_url, **request_kwargs) as response:
                     if response.status != 200:
                         error_text = await response.text()
                         logger.error(f"API 请求失败: {error_text}")
