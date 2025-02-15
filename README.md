@@ -249,6 +249,4 @@ Step 6. 配置程序到你的 Chatbox（推荐 [NextChat](https://nextchat.dev/)
 - [UV as package manager](https://docs.astral.sh/uv/#project-management)
 - [Docker](https://www.docker.com/)
 
-# Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=ErlichLiu/DeepClaude&type=Date)](https://star-history.com/#ErlichLiu/DeepClaude&Date)
