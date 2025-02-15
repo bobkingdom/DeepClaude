@@ -37,7 +37,11 @@ class ClaudeClient(BaseClient):
                 内容类型: "answer"
                 内容: 实际的文本内容
         """
-
+        # 处理消息列表，确保所有消息都有非空的 content
+        filtered_messages = []
+        for msg in messages:
+            if msg.get("content") and msg["content"].strip():  # 只保留有非空内容的消息
+                filtered_messages.append(msg)
         if self.provider == "openrouter":
             # 转换模型名称为 OpenRouter 格式
             model = "anthropic/claude-3.5-sonnet"
@@ -83,7 +87,7 @@ class ClaudeClient(BaseClient):
 
             data = {
                 "model": model,
-                "messages": messages,
+                "messages": filtered_messages,    # 使用过滤后的消息列表
                 "max_tokens": 8192,
                 "stream": stream,
                 "temperature": 1 if model_arg[0] < 0 or model_arg[0] > 1 else model_arg[0], # Claude仅支持temperature与top_p
