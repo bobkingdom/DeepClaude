@@ -3,7 +3,7 @@ from typing import AsyncGenerator, Any
 import aiohttp
 from app.utils.logger import logger
 from abc import ABC, abstractmethod
-
+import os
 
 class BaseClient(ABC):
     def __init__(self, api_key: str, api_url: str):
@@ -15,6 +15,8 @@ class BaseClient(ABC):
         """
         self.api_key = api_key
         self.api_url = api_url
+        # 从环境变量获取代理配置
+        self.proxy = os.getenv("PROXY")
         
     async def _make_request(self, headers: dict, data: dict) -> AsyncGenerator[bytes, None]:
         """发送请求并处理响应
@@ -28,7 +30,9 @@ class BaseClient(ABC):
         """
         try:
             async with aiohttp.ClientSession() as session:
-                async with session.post(self.api_url, headers=headers, json=data) as response:
+                async with session.post(self.api_url, headers=headers, json=data
+                                       proxy=self.proxy  # 使用配置的代理
+                ) as response:
                     if response.status != 200:
                         error_text = await response.text()
                         logger.error(f"API 请求失败: {error_text}")
